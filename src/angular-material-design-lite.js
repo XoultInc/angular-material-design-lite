@@ -18,21 +18,26 @@
   angular.module('mdl').directive('mdlTextField', function(mdlConfig){
     return {
       restrict: 'E',
-      template: '<div class="mdl-textfield mdl-js-textfield is-dirty" ng-class="ngClass"><input class="mdl-textfield__input" type="{{type}}" ng-model="ngModel" ng-required="ngRequired" ng-readonly="ngReadonly" ng-disabled="ngDisabled" /><label class="mdl-textfield__label">{{label}}</label></div>',
+      template: '<div class="mdl-textfield mdl-js-textfield is-dirty" ng-class="{\'mdl-textfield--floating-label\': floating,\'is-disabled\':ngDisabled}"><input class="mdl-textfield__input" type="{{type}}" ng-model="ngModel" ng-required="ngRequired" ng-readonly="ngReadonly" ng-disabled="ngDisabled" ng-pattern="ngPattern" /><label class="mdl-textfield__label">{{label}}</label></div>',
       scope: {
         ngModel: '=',
         ngRequired:'=',
         ngReadonly:'=',
-        ngDisabled:'='
+        ngDisabled:'=',
+        ngPattern:'='
       },
       link: function($scope, el, $attrs){
         $scope.label = $attrs.label;
         $scope.type = $attrs.type ? $attrs.type : 'text';
-
-        $scope.ngClass = {
-          'mdl-textfield--floating-label': mdlConfig.floating,
-          'is-disabled':$scope.ngDisabled
-        };
+        $scope.floating = mdlConfig.floating;
+        var input = el.find("input");
+        var container = el.children();
+        if(!!$scope.ngPattern) {
+          input.on("keyup", checkIsValid);
+        }
+        function checkIsValid(){
+          container.toggleClass('is-invalid',!$scope.ngPattern.test(input.val()));
+        }
       }
     };
   });
