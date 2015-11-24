@@ -18,7 +18,7 @@
   angular.module('mdl').directive('mdlTextField', function(mdlConfig){
     return {
       restrict: 'E',
-      template: '<div class="mdl-textfield mdl-js-textfield is-dirty" ng-class="ngClass"><input class="mdl-textfield__input" type="{{type}}" ng-model="ngModel" ng-required="{{required}}" /><label class="mdl-textfield__label">{{label}}</label></div>',
+      template: '<div class="mdl-textfield mdl-js-textfield is-dirty" ng-class="ngClass"><input class="mdl-textfield__input" type="{{type}}" ng-model="ngModel" /><label class="mdl-textfield__label">{{label}}</label></div>',
       scope: {
         ngModel: '='
       },
@@ -26,7 +26,7 @@
         $scope.label = $attrs.label;
         $scope.type = $attrs.type ? $attrs.type : 'text';
         if($attrs.hasOwnProperty("required")){
-          $scope.required = true;
+          el.find('input').attr('required', true);
         }
         $scope.ngClass = {
           'mdl-textfield--floating-label': mdlConfig.floating
