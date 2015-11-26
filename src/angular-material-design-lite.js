@@ -15,7 +15,7 @@
   });
 
 
-  angular.module('mdl').directive('mdlTextField', function(mdlConfig, $compile){
+  angular.module('mdl').directive('mdlTextField', function(mdlConfig, $timeout){
     return {
       restrict: 'E',
       template: '<div class="mdl-textfield mdl-js-textfield is-dirty" ng-class="{\'mdl-textfield--floating-label\': floating,\'is-disabled\':ngDisabled}"><input class="mdl-textfield__input" type="{{type}}" ng-model="ngModel" ng-required="ngRequired" ng-readonly="ngReadonly" ng-disabled="ngDisabled" ng-pattern="ngPattern" ng-change="bindToProperty()" /><label class="mdl-textfield__label">{{label}}</label></div>',
@@ -29,7 +29,7 @@
       },
       controller: function($scope) {
         $scope.bindToProperty = function(){
-          $scope.ngChange();
+          $timeout($scope.ngChange, 0);
         }
       },
       link: function($scope, el, $attrs){
