@@ -18,13 +18,20 @@
   angular.module('mdl').directive('mdlTextField', function(mdlConfig){
     return {
       restrict: 'E',
-      template: '<div class="mdl-textfield mdl-js-textfield is-dirty" ng-class="{\'mdl-textfield--floating-label\': floating,\'is-disabled\':ngDisabled}"><input class="mdl-textfield__input" type="{{type}}" ng-model="ngModel" ng-required="ngRequired" ng-readonly="ngReadonly" ng-disabled="ngDisabled" ng-pattern="ngPattern" /><label class="mdl-textfield__label">{{label}}</label></div>',
+      template: '<div class="mdl-textfield mdl-js-textfield is-dirty" ng-class="{\'mdl-textfield--floating-label\': floating,\'is-disabled\':ngDisabled}"><input class="mdl-textfield__input" type="{{type}}" ng-model="ngModel" ng-required="ngRequired" ng-readonly="ngReadonly" ng-disabled="ngDisabled" ng-pattern="ngPattern" ng-change="bindToProperty()" ng-model-options="ngModelOptions" /><label class="mdl-textfield__label">{{label}}</label></div>',
       scope: {
         ngModel: '=',
         ngRequired:'=',
         ngReadonly:'=',
         ngDisabled:'=',
-        ngPattern:'='
+        ngPattern:'=',
+        ngModelOptions: '=',
+        ngChange:'&'
+      },
+      controller: function($scope) {
+        $scope.bindToProperty = function() {
+          $scope.ngChange();
+        }
       },
       link: function($scope, el, $attrs){
         $scope.label = $attrs.label;
