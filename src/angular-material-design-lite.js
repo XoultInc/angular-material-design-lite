@@ -18,7 +18,7 @@
   angular.module('mdl').directive('mdlTextField', function(mdlConfig, $timeout){
     return {
       restrict: 'E',
-      template: '<div class="mdl-textfield mdl-js-textfield is-dirty" ng-class="{\'mdl-textfield--floating-label\': floating,\'is-disabled\':ngDisabled}"><input class="mdl-textfield__input" type="{{type}}" ng-model="ngModel" ng-required="ngRequired" ng-readonly="ngReadonly" ng-disabled="ngDisabled" ng-pattern="ngPattern" ng-change="bindToProperty()" /><label class="mdl-textfield__label">{{label}}</label></div>',
+      template: '<div class="mdl-textfield mdl-js-textfield is-dirty" ng-class="{\'mdl-textfield--floating-label\': floating,\'is-disabled\':ngDisabled}"><input class="mdl-textfield__input" type="{{type}}"  ng-model="ngModel" ng-required="ngRequired" ng-readonly="ngReadonly" ng-disabled="ngDisabled" ng-pattern="ngPattern" ng-change="bindToProperty()" /><label class="mdl-textfield__label">{{label}}</label></div>',
       scope: {
         ngModel: '=',
         ngRequired:'=',
@@ -48,6 +48,57 @@
         if ($attrs['ngModelOptions']) {
           input.attr('ng-model-options', $attrs['ngModelOptions']);
         }
+
+        if ($attrs['name']) {
+          input.attr('name', $attrs['name']);
+          el.removeAttr('name');
+        }
+      }
+    };
+  });
+
+  angular.module('mdl').directive('mdlDateField', function(mdlConfig, $timeout, $filter){
+    return {
+      restrict: 'E',
+      template: '<div class="mdl-textfield mdl-js-textfield is-dirty" ng-class="{\'mdl-textfield--floating-label\': floating,\'is-disabled\':ngDisabled}"><input class="mdl-textfield__input" type="{{type}}"  ng-model="ngModelFormatted" ng-required="ngRequired" ng-readonly="ngReadonly" ng-disabled="ngDisabled" ng-pattern="ngPattern" ng-change="bindToProperty()" /><label class="mdl-textfield__label">{{label}}</label></div>',
+      scope: {
+        ngModel: '=',
+        ngModelFormatted: '=',
+        ngRequired:'=',
+        ngReadonly:'=',
+        ngDisabled:'=',
+        ngPattern:'=',
+        ngChange:'&'
+      },
+      controller: function($scope) {
+        $scope.bindToProperty = function() {
+          $scope.ngModel = $scope.ngModelFormatted;
+          $timeout($scope.ngChange, 0);
+        }
+      },
+      link: function($scope, el, $attrs){
+        $scope.label = $attrs.label;
+        $scope.type = $attrs.type ? $attrs.type : 'date';
+        $scope.floating = mdlConfig.floating;
+        var input = el.find('input');
+        var container = el.children();
+        if (!!$scope.ngPattern) {
+          input.on('keyup', checkIsValid);
+        }
+        function checkIsValid(){
+          container.toggleClass('is-invalid',!$scope.ngPattern.test(input.val()));
+        }
+
+        if ($attrs['ngModelOptions']) {
+          input.attr('ng-model-options', $attrs['ngModelOptions']);
+        }
+
+        if ($attrs['name']) {
+          input.attr('name', $attrs['name']);
+          el.removeAttr('name');
+        }
+
+        $scope.ngModelFormatted = $filter('date')($scope.ngModel, 'yyyy-MM-dd');
       }
     };
   });
