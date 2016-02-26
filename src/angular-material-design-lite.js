@@ -60,7 +60,7 @@
   angular.module('mdl').directive('mdlDateField', function(mdlConfig, $timeout, $filter){
     return {
       restrict: 'E',
-      template: '<div class="mdl-textfield mdl-js-textfield is-dirty" ng-class="{\'mdl-textfield--floating-label\': floating,\'is-disabled\':ngDisabled}"><input class="mdl-textfield__input" type="{{type}}"  ng-model="ngModelFormatted" ng-required="ngRequired" ng-readonly="ngReadonly" ng-disabled="ngDisabled" ng-pattern="ngPattern" ng-change="bindToProperty()" /><label class="mdl-textfield__label">{{label}}</label></div>',
+      template: '<div class="mdl-textfield mdl-js-textfield is-dirty" ng-class="{\'mdl-textfield--floating-label\': floating,\'is-disabled\':ngDisabled}"><input class="mdl-textfield__input" type="{{type}}" ng-model="ngModelFormatted" ng-required="ngRequired" ng-readonly="ngReadonly" ng-disabled="ngDisabled" ng-pattern="ngPattern" ng-change="bindToProperty()" /><label class="mdl-textfield__label">{{label}}</label></div>',
       scope: {
         ngModel: '=',
         ngModelFormatted: '=',
@@ -82,9 +82,11 @@
         $scope.floating = mdlConfig.floating;
         var input = el.find('input');
         var container = el.children();
+
         if (!!$scope.ngPattern) {
           input.on('keyup', checkIsValid);
         }
+
         function checkIsValid(){
           container.toggleClass('is-invalid',!$scope.ngPattern.test(input.val()));
         }
@@ -98,18 +100,26 @@
           el.removeAttr('name');
         }
 
-        $scope.ngModelFormatted = $filter('date')($scope.ngModel, 'yyyy-MM-dd');
+        $scope.$watch('ngModel', function() {
+          $scope.ngModelFormatted = $filter('date')($scope.ngModel, 'yyyy-MM-dd');
+        });
       }
     };
   });
 
 
-  angular.module('mdl').directive('mdlCheckbox', function(mdlConfig){
+  angular.module('mdl').directive('mdlCheckbox', function(mdlConfig, $timeout){
     return {
       restrict: 'E',
-      template: '<label class="mdl-checkbox mdl-js-checkbox" ng-class="ngClass"><input type="checkbox" ng-model="ngModel" class="mdl-checkbox__input" /><span class="mdl-checkbox__label">{{label}}</span></label>',
+      template: '<label class="mdl-checkbox mdl-js-checkbox" ng-class="ngClass"><input type="checkbox" ng-model="ngModel" class="mdl-checkbox__input" ng-change="bindToProperty()" /><span class="mdl-checkbox__label">{{label}}</span></label>',
       scope: {
-        ngModel: '='
+        ngModel: '=',
+        ngChange:'&'
+      },
+      controller: function($scope) {
+        $scope.bindToProperty = function(){
+          $timeout($scope.ngChange, 0);
+        }
       },
       link: function($scope, el, $attrs){
         $scope.label = $attrs.label;
