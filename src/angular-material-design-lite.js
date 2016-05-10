@@ -148,7 +148,12 @@
         }
 
         $scope.$watch('ngModel', function() {
-          $scope.ngModelFormatted = $filter('date')($scope.ngModel, 'yyyy-MM-dd');
+          if ($scope.type === 'datetime-local') {
+            $scope.ngModelFormatted = $scope.ngModel;
+          } else {
+            $scope.ngModelFormatted = $filter('date')($scope.ngModel, 'yyyy-MM-dd');
+          }
+
         });
       }
     };
