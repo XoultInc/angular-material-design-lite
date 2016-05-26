@@ -152,7 +152,7 @@
       template: '<div class="mdl-textfield mdl-js-textfield is-dirty" ng-class="{\'mdl-textfield--floating-label\': floating,\'is-disabled\':ngDisabled}"><input class="mdl-textfield__input" type="{{type}}" ng-model="ngModelFormatted" ng-required="ngRequired" ng-readonly="ngReadonly" ng-disabled="ngDisabled" ng-pattern="ngPattern" ng-change="bindToProperty()" /><label class="mdl-textfield__label">{{label}}</label></div>',
       scope: {
         ngModel: '=',
-        ngModelFormatted: '=',
+        ngModelFormatted: '=?',
         ngRequired:'=',
         ngReadonly:'=',
         ngDisabled:'=',
