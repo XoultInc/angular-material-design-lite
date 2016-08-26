@@ -247,12 +247,18 @@
   });
 
 
-  angular.module('mdl').directive('mdlSwitch', function (mdlConfig) {
+  angular.module('mdl').directive('mdlSwitch', function (mdlConfig, $timeout) {
     return {
       restrict: 'E',
-      template: '<label class="mdl-switch mdl-js-switch" ng-class="ngClass"><input type="checkbox" ng-model="ngModel" class="mdl-switch__input" ng-checked="ngModel" /><span class="mdl-switch__label">{{label}}</span></label>',
+      template: '<label class="mdl-switch mdl-js-switch" ng-class="ngClass"><input type="checkbox" ng-model="ngModel" class="mdl-switch__input" ng-checked="ngModel" ng-change="bindToProperty()" /><span class="mdl-switch__label">{{label}}</span></label>',
       scope: {
-        ngModel: '='
+        ngModel: '=',
+        ngChange: '&'
+      },
+      controller: function ($scope) {
+        $scope.bindToProperty = function () {
+          $timeout($scope.ngChange, 0);
+        }
       },
       link: function ($scope, el, $attrs) {
         $scope.label = $attrs.label;
