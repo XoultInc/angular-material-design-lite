@@ -18,7 +18,7 @@
   angular.module('mdl').directive('mdlTextField', function (mdlConfig, $timeout) {
     return {
       restrict: 'E',
-      template: '<div class="mdl-textfield mdl-js-textfield is-dirty" ng-class="{\'mdl-textfield--floating-label\': floating,\'is-disabled\':ngDisabled}"><input class="mdl-textfield__input" type="{{type}}"  ng-model="ngModel" ng-required="ngRequired" ng-readonly="ngReadonly" ng-disabled="ngDisabled" ng-pattern="ngPattern" ng-change="bindToProperty()" /><label class="mdl-textfield__label">{{label}}</label></div>',
+      template: '<div class="mdl-textfield mdl-js-textfield" ng-class="{\'mdl-textfield--floating-label\': floating,\'is-disabled\':ngDisabled, \'is-dirty\': isDirty}"><input class="mdl-textfield__input" type="{{type}}"  ng-model="ngModel" ng-required="ngRequired" ng-readonly="ngReadonly" ng-disabled="ngDisabled" ng-pattern="ngPattern" ng-change="bindToProperty()" /><label class="mdl-textfield__label">{{label}}</label></div>',
       scope: {
         ngModel: '=',
         ngRequired: '=',
@@ -53,6 +53,21 @@
           input.attr('name', $attrs['name']);
           el.removeAttr('name');
         }
+
+        $scope.$watch('ngModel', function () {
+          if ($scope.ngModel && $scope.ngModel !== '') {
+            $scope.isDirty = true;
+          } else {
+            $scope.isDirty = false;
+          }
+        });
+
+        angular.forEach($attrs, function (val, key) {
+          if (angular.isString(key) && key.startsWith('copy')) {
+            el.removeAttr($attrs.$attr[key]);
+            input.attr($attrs.$attr[key].replace('copy-', ''), val);
+          }
+        });
       }
     };
   });
@@ -269,7 +284,7 @@
           'mdl-js-ripple-effect': mdlConfig.rippleEffect
         };
 
-        $scope.$watch('ngDisabled', function() {
+        $scope.$watch('ngDisabled', function () {
           el.find('input').attr('ng-disabled', $scope.ngDisabled);
         });
       }
